@@ -3,13 +3,14 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"net/http"
 	"os"
 	"stvCms/internal/config"
 )
 
 func main() {
 	loadEnv()
-	startDatabase()
+	//startDatabase()
 	startServer()
 }
 
@@ -22,6 +23,9 @@ func loadEnv() {
 
 func startServer() {
 	router := gin.Default()
+	router.GET("/ping", func(context *gin.Context) {
+		context.JSON(http.StatusOK, gin.H{"response": "pong!"})
+	})
 	// post group
 	postGroup := router.Group("/post")
 	postGroup.GET("")
