@@ -22,18 +22,27 @@ func (h *postHandler) CreatePost(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&postRequest); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	response, err := h.service.CreatePost(postRequest)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": response})
+	ctx.JSON(http.StatusOK, gin.H{"response": response})
 
 }
 
 func (h *postHandler) GetPosts(ctx *gin.Context) {
+	response, err := h.service.GetPosts()
 
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"response": response})
 }

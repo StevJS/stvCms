@@ -4,10 +4,12 @@ import (
 	"stvCms/internal/models"
 	"stvCms/internal/repository"
 	"stvCms/internal/rest/request"
+	"stvCms/internal/rest/response"
 )
 
 type IPostService interface {
 	CreatePost(req request.CreatePostRequest) (string, error)
+	GetPosts() ([]response.PostResponse, error)
 }
 
 type postService struct {
@@ -29,6 +31,28 @@ func (ps *postService) CreatePost(req request.CreatePostRequest) (string, error)
 	}
 
 	return response, nil
+}
+
+func (ps *postService) GetPosts() ([]response.PostResponse, error) {
+
+	posts := []response.PostResponse{}
+
+	modelPosts, err := ps.repository.GetPosts()
+
+	if err != nil {
+		return posts, nil
+	}
+
+	for _, post := range modelPosts {
+		data := response.PostResponse{
+			Title:   post.Title,
+			Content: post.Content,
+			Author:  post.Author,
+		}
+		posts = append(posts, data)
+	}
+
+	return posts, nil
 }
 
 func reqToModel(req request.CreatePostRequest) models.Post {

@@ -33,7 +33,7 @@ func startServer() {
 
 	postGroup := router.Group("/post")
 	postGroup.POST("/create", postHandler.CreatePost)
-	postGroup.GET("/get", postHandler.GetPosts)
+	postGroup.GET("/getAll", postHandler.GetPosts)
 
 	// users group
 	//userGroup := router.Group("/user")
