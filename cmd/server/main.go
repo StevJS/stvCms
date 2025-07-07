@@ -6,11 +6,12 @@ import (
 	"net/http"
 	"os"
 	"stvCms/internal/config"
+	"stvCms/internal/handlers"
 )
-//prueba commit 
+
 func main() {
 	loadEnv()
-	//startDatabase()
+	startDatabase()
 	startServer()
 }
 
@@ -27,8 +28,12 @@ func startServer() {
 		context.JSON(http.StatusOK, gin.H{"response": "pong!"})
 	})
 	// post group
+
+	postHandler := handlers.NewPostHandler()
+
 	postGroup := router.Group("/post")
-	postGroup.GET("")
+	postGroup.POST("/create", postHandler.CreatePost)
+	postGroup.GET("/get", postHandler.GetPosts)
 
 	// users group
 	//userGroup := router.Group("/user")

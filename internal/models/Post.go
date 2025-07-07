@@ -7,5 +7,5 @@ type Post struct {
 	Title   string
 	Content string
 	Author  string
-	Images  []byte `gorm:"type:bytea"`
+	//Images  []byte `gorm:"type:bytea"`
 }
