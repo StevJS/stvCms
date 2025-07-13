@@ -46,3 +46,20 @@ func (h *postHandler) GetPosts(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"response": response})
 }
+
+func (h *postHandler) UpdatePost(ctx *gin.Context) {
+	req := request.UpdatePostRequest{}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := h.service.UpdatePost(req)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+	ctx.JSON(http.StatusOK, gin.H{"response": response})
+
+}

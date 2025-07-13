@@ -6,3 +6,10 @@ type CreatePostRequest struct {
 	Author  string `json:"author" required:"true"`
 	//Images  []byte `json:"images"`
 }
+
+type UpdatePostRequest struct {
+	Id      uint   `json:"id"`
+	Title   string `json:"title"`
+	Content string `json:"content"`
+	Author  string `json:"author"`
+}

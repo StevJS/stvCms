@@ -9,6 +9,8 @@ import (
 type IPostRepository interface {
 	CreatePost(post models.Post) (string, error)
 	GetPosts() ([]models.Post, error)
+	UpdatePost(id uint, post models.Post) (string, error)
+	GetPostById(id uint) (models.Post, error)
 }
 
 type postRepository struct {
@@ -36,4 +38,23 @@ func (pr *postRepository) GetPosts() ([]models.Post, error) {
 		return posts, err
 	}
 	return posts, nil
+}
+
+func (pr *postRepository) UpdatePost(id uint, post models.Post) (string, error) {
+	result := pr.db.Model(&models.Post{}).Where("id = ?", id).Updates(post)
+	if result.Error != nil {
+		return "No se pudo actualizar el post", result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return "El post no fue encontrado o no habían datos para actualizar", nil
+	}
+
+	return "Post actualizado", nil
+}
+
+func (pr *postRepository) GetPostById(id uint) (models.Post, error) {
+	var post models.Post
+	err := pr.db.First(&post, id).Error
+	return post, err
 }

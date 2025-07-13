@@ -1,6 +1,7 @@
 package services
 
 import (
+	"gorm.io/gorm"
 	"stvCms/internal/models"
 	"stvCms/internal/repository"
 	"stvCms/internal/rest/request"
@@ -10,6 +11,7 @@ import (
 type IPostService interface {
 	CreatePost(req request.CreatePostRequest) (string, error)
 	GetPosts() ([]response.PostResponse, error)
+	UpdatePost(req request.UpdatePostRequest) (string, error)
 }
 
 type postService struct {
@@ -45,6 +47,7 @@ func (ps *postService) GetPosts() ([]response.PostResponse, error) {
 
 	for _, post := range modelPosts {
 		data := response.PostResponse{
+			Id:      post.Model.ID,
 			Title:   post.Title,
 			Content: post.Content,
 			Author:  post.Author,
@@ -53,6 +56,28 @@ func (ps *postService) GetPosts() ([]response.PostResponse, error) {
 	}
 
 	return posts, nil
+}
+
+func (ps *postService) UpdatePost(req request.UpdatePostRequest) (string, error) {
+	postModel, err := ps.repository.GetPostById(req.Id)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return "Post no encontrado con ese ID", err
+		}
+		return "Error al buscar el post", err
+	}
+
+	// mapping req to model
+	postModel.Title = req.Title
+	postModel.Content = req.Content
+	postModel.Author = req.Author
+
+	postUpdated, err := ps.repository.UpdatePost(req.Id, postModel)
+	if err != nil {
+		return "", err
+	}
+
+	return postUpdated, nil
 }
 
 func reqToModel(req request.CreatePostRequest) models.Post {
