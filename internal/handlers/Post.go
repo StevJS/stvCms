@@ -63,3 +63,39 @@ func (h *postHandler) UpdatePost(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"response": response})
 
 }
+
+func (h *postHandler) DeletePostById(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		return
+	}
+
+	response, err := h.service.DeletePostById(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"response": response})
+}
+
+func (h *postHandler) GetPostById(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
+		return
+	}
+
+	response, err := h.service.GetPostById(id)
+
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"data": response})
+}

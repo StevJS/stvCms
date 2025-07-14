@@ -11,6 +11,7 @@ type IPostRepository interface {
 	GetPosts() ([]models.Post, error)
 	UpdatePost(id uint, post models.Post) (string, error)
 	GetPostById(id uint) (models.Post, error)
+	DeletePostById(id int) bool
 }
 
 type postRepository struct {
@@ -57,4 +58,9 @@ func (pr *postRepository) GetPostById(id uint) (models.Post, error) {
 	var post models.Post
 	err := pr.db.First(&post, id).Error
 	return post, err
+}
+
+func (pr *postRepository) DeletePostById(id int) bool {
+	ok := pr.db.Delete(&models.Post{}, id).RowsAffected > 0
+	return ok
 }
