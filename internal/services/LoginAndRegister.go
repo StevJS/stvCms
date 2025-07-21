@@ -3,7 +3,6 @@ package services
 type ILoginAndRegisterService interface {
 }
 
-//
-//func NewLoginAndRegisterService() ILoginAndRegisterService {
-//
-//}
+func NewLoginAndRegisterService() ILoginAndRegisterService {
+
+}

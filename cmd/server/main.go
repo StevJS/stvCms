@@ -30,6 +30,7 @@ func startServer() {
 	// post group
 
 	postHandler := handlers.NewPostHandler()
+	login := handlers.NewLoginAndRegisterHandler()
 
 	postGroup := router.Group("/post")
 	postGroup.POST("/create", postHandler.CreatePost)
@@ -37,6 +38,9 @@ func startServer() {
 	postGroup.GET("/getPost/:id", postHandler.GetPostById)
 	postGroup.PUT("/update", postHandler.UpdatePost)
 	postGroup.DELETE("/delete/:id", postHandler.DeletePostById)
+
+	// login
+	postGroup.POST("", login.Login)
 
 	// users group
 	//userGroup := router.Group("/user")
