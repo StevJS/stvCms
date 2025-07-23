@@ -67,5 +67,9 @@ func (pr *postRepository) DeletePostById(id int) bool {
 }
 
 func (pr *postRepository) SaveCodeContentInPost(codeContent models.CodeContent) error {
-	return pr.db.Save(&codeContent).Error
+	err := pr.db.Create(&codeContent).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }
