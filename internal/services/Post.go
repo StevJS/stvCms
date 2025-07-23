@@ -44,26 +44,49 @@ func (ps *postService) CreatePost(req request.CreatePostRequest) (string, error)
 func (ps *postService) GetPosts() ([]response.PostResponse, error) {
 
 	posts := []response.PostResponse{}
-
 	modelPosts, err := ps.repository.GetPosts()
-
 	if err != nil {
 		return posts, nil
 	}
 
 	for _, post := range modelPosts {
 		data := response.PostResponse{
-			Id:        post.Model.ID,
-			CreatedAt: post.CreatedAt,
-			UpdatedAt: post.UpdatedAt,
-			Title:     post.Title,
-			Content:   post.Content,
-			Author:    post.Author,
+			Id:          post.Model.ID,
+			CreatedAt:   post.CreatedAt,
+			UpdatedAt:   post.UpdatedAt,
+			Title:       post.Title,
+			Content:     post.Content,
+			Author:      post.Author,
+			CodeContent: ps.GetCodeContent(post.ID),
 		}
 		posts = append(posts, data)
 	}
 
 	return posts, nil
+}
+
+func (ps *postService) GetCodeContent(postID uint) []response.CodeContentResponse {
+	if postID == 0 {
+		return []response.CodeContentResponse{}
+	}
+
+	codeContents, err := ps.repository.GetCodeContents(postID)
+
+	if err != nil {
+		return []response.CodeContentResponse{}
+	}
+	var codeContentResponses []response.CodeContentResponse
+
+	for _, codeContent := range codeContents {
+		codeContentResponse := response.CodeContentResponse{
+			Code:     codeContent.Code,
+			Language: codeContent.Language,
+		}
+
+		codeContentResponses = append(codeContentResponses, codeContentResponse)
+	}
+
+	return codeContentResponses
 }
 
 func (ps *postService) GetPostById(id string) (response.PostResponse, error) {

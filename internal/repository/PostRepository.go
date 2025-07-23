@@ -13,6 +13,7 @@ type IPostRepository interface {
 	GetPostById(id uint) (models.Post, error)
 	DeletePostById(id int) bool
 	SaveCodeContentInPost(codeContent models.CodeContent) error
+	GetCodeContents(postID uint) ([]models.CodeContent, error)
 }
 
 type postRepository struct {
@@ -72,4 +73,13 @@ func (pr *postRepository) SaveCodeContentInPost(codeContent models.CodeContent) 
 		return err
 	}
 	return nil
+}
+
+func (pr *postRepository) GetCodeContents(postID uint) ([]models.CodeContent, error) {
+	var codeContents []models.CodeContent
+	err := pr.db.Where("post_id = ?", postID).Find(&codeContents).Error
+	if err != nil {
+		return codeContents, err
+	}
+	return codeContents, nil
 }
