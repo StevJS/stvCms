@@ -28,6 +28,7 @@ func Init() *gorm.DB {
 
 	db.AutoMigrate(
 		&models.Post{},
+		&models.CodeContent{},
 	)
 
 	return db

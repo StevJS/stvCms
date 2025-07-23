@@ -99,3 +99,19 @@ func (h *postHandler) GetPostById(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"data": response})
 }
+
+func (h *postHandler) InsertCodeContentInPost(ctx *gin.Context) {
+	var req request.CodeContent
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	response, err := h.service.InsertCodeContentInPost(req)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"response": response})
+}

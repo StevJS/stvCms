@@ -38,9 +38,10 @@ func startServer() {
 	postGroup.GET("/getPost/:id", postHandler.GetPostById)
 	postGroup.PUT("/update", postHandler.UpdatePost)
 	postGroup.DELETE("/delete/:id", postHandler.DeletePostById)
+	postGroup.POST("/codeContent", postHandler.InsertCodeContentInPost)
 
 	// login
-	postGroup.POST("", login.Login)
+	postGroup.POST("/login/oauth2", login.Login)
 
 	// users group
 	//userGroup := router.Group("/user")

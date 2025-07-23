@@ -16,5 +16,5 @@ func NewLoginAndRegisterHandler() *LoginAndRegisterHandler {
 }
 
 func (h *LoginAndRegisterHandler) Login(ctx *gin.Context) {
-
+	//const req = ctx.Param("req")
 }

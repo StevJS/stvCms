@@ -12,6 +12,7 @@ type IPostRepository interface {
 	UpdatePost(id uint, post models.Post) (string, error)
 	GetPostById(id uint) (models.Post, error)
 	DeletePostById(id int) bool
+	SaveCodeContentInPost(codeContent models.CodeContent) error
 }
 
 type postRepository struct {
@@ -63,4 +64,8 @@ func (pr *postRepository) GetPostById(id uint) (models.Post, error) {
 func (pr *postRepository) DeletePostById(id int) bool {
 	ok := pr.db.Delete(&models.Post{}, id).RowsAffected > 0
 	return ok
+}
+
+func (pr *postRepository) SaveCodeContentInPost(codeContent models.CodeContent) error {
+	return pr.db.Save(&codeContent).Error
 }
