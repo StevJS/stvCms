@@ -16,6 +16,8 @@ type IPostService interface {
 	GetPostById(id string) (response.PostResponse, error)
 	UpdatePost(req request.UpdatePostRequest) (string, error)
 	DeletePostById(id string) (string, error)
+	InsertCodeContentInPost(content request.CodeContent) (string, error)
+	//GetCodeContent()
 }
 
 type postService struct {
@@ -31,12 +33,12 @@ func NewPostService() IPostService {
 func (ps *postService) CreatePost(req request.CreatePostRequest) (string, error) {
 	post := reqToModel(req)
 
-	response, err := ps.repository.CreatePost(post)
+	modelPost, err := ps.repository.CreatePost(post)
 	if err != nil {
 		return "No se pudo crear el post", err
 	}
 
-	return response, nil
+	return modelPost, nil
 }
 
 func (ps *postService) GetPosts() ([]response.PostResponse, error) {
@@ -125,4 +127,19 @@ func reqToModel(req request.CreatePostRequest) models.Post {
 		Author:  req.Author,
 		//Images:  req.Images,
 	}
+}
+
+func (ps *postService) InsertCodeContentInPost(request request.CodeContent) (string, error) {
+
+	model := models.CodeContent{
+		Code:     request.Content.Code,
+		Language: request.Content.Language,
+		PostID:   uint(request.PostID),
+	}
+	err := ps.repository.SaveCodeContentInPost(model)
+	if err != nil {
+		return "", err
+	}
+
+	return "Code content asociado correctamente", nil
 }
