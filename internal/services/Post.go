@@ -95,11 +95,13 @@ func (ps *postService) GetPostById(id string) (response.PostResponse, error) {
 	post, err := ps.repository.GetPostById(uint(postId))
 
 	postResponse := response.PostResponse{
-		Id:        post.Model.ID,
-		CreatedAt: post.CreatedAt,
-		Title:     post.Title,
-		Content:   post.Content,
-		Author:    post.Author,
+		Id:          post.Model.ID,
+		CreatedAt:   post.CreatedAt,
+		UpdatedAt:   post.UpdatedAt,
+		Title:       post.Title,
+		Content:     post.Content,
+		Author:      post.Author,
+		CodeContent: ps.GetCodeContent(post.ID),
 	}
 
 	if err != nil {
