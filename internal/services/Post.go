@@ -1,8 +1,14 @@
 package services
 
 import (
+	"errors"
 	"fmt"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"io"
+	"mime/multipart"
+	"os"
+	"path/filepath"
 	"strconv"
 	"stvCms/internal/models"
 	"stvCms/internal/repository"
@@ -17,7 +23,8 @@ type IPostService interface {
 	UpdatePost(req request.UpdatePostRequest) (string, error)
 	DeletePostById(id string) (string, error)
 	InsertCodeContentInPost(content request.CodeContent) (string, error)
-	//GetCodeContent()
+	//GetCodeContent() // TODO : terminar
+	SavePostImage(postID string, image *multipart.FileHeader) (string, error)
 }
 
 type postService struct {
@@ -101,7 +108,7 @@ func (ps *postService) GetPostById(id string) (response.PostResponse, error) {
 		Title:       post.Title,
 		Content:     post.Content,
 		Author:      post.Author,
-		CodeContent: ps.GetCodeContent(post.ID),
+		CodeContent: ps.GetCodeContent(post.Model.ID),
 	}
 
 	if err != nil {
@@ -167,4 +174,46 @@ func (ps *postService) InsertCodeContentInPost(request request.CodeContent) (str
 	}
 
 	return "Code content asociado correctamente", nil
+}
+
+func (ps *postService) SavePostImage(postID string, image *multipart.FileHeader) (string, error) {
+	postId, err := strconv.Atoi(postID)
+	if err != nil {
+		return "", err
+	}
+
+	src, err := image.Open()
+	if err != nil {
+		return "", err
+	}
+	defer src.Close()
+
+	imageExtension := filepath.Ext(image.Filename)
+	uniqueFilename := uuid.NewString() + imageExtension
+
+	uploadDir := "./public/uploads/posts"
+	if err := os.MkdirAll(uploadDir, os.ModePerm); err != nil {
+		return "", errors.New("Error al crear el upload dir")
+	}
+
+	destinationPath := filepath.Join(uploadDir, uniqueFilename)
+	dst, err := os.Create(destinationPath)
+	if err != nil {
+		return "", errors.New("Error al crear el upload dir")
+	}
+	defer dst.Close()
+
+	if _, err := io.Copy(dst, src); err != nil {
+		return "", errors.New("Error al copiar el archivo")
+	}
+
+	publicUrl := "uploads/posts/" + uniqueFilename
+
+	err = ps.repository.SavePostImage(postId, publicUrl)
+	if err != nil {
+		return "", err
+	}
+
+	return publicUrl, nil
+
 }
